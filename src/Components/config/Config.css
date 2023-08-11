@@ -1,0 +1,98 @@
+.config-container{
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: space-around;
+}
+.config{
+    width:60%;
+}
+.field-group{
+    width: 70%;
+    height:auto;
+    display:flex;
+    justify-content: space-around;
+}
+.field-group>div{
+    width: 100%;
+    height:auto;
+    
+}
+.field-group>div>label{
+    width: 100%;
+    height: 30px;
+    text-align: left;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+.field-group>div>select{
+    width: 100%;
+    height:30px;
+    border-radius: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+fieldset{
+    border-left: none;
+    border-bottom: none;
+    border-right: none;
+
+}
+legend{
+    text-align: left;
+}
+.field-group>button{
+    width: 50%;
+    height: 30px;
+    border:none;
+    outline:none;
+    background-color: green;
+    color: #fff;
+    font-weight: 600;
+    margin-left: 10%;
+}
+.logOut{
+    width: 80%;
+    height: 30px;
+    border:none;
+    outline:none;
+    background-color: rgb(0, 128, 0,0.7);
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-left: 10%;
+}
+.logOut:hover{
+    cursor: pointer;
+}
+.info{
+    margin-top: 2%;
+}
+.selected-groups{
+    display:flex;
+    width: 100%;
+    height:auto;
+    justify-content:space-evenly;
+    align-items: center;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+.group-holder{
+    background-color: rgba(133, 248, 210,0.7);
+    border-radius: 8px;
+    height: 20px;
+    min-width:5%;
+    padding: 10px;
+    font-size:12px;
+    font-weight: 700;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 5px;
+}
+.grpItem{
+    font-weight: 600;
+}
