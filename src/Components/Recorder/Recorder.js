@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { FaMicrophone, FaPlayCircle, FaStopCircle } from 'react-icons/fa'
-
+import { getDownloadURL } from 'firebase/storage'
 import './Recorder.css'
 import { toBase64Encoded } from '../utils/MakeBase64'
-import { extractGroup } from '../utils/General'
+import { extractGroup, randomString, uploadToFirebase } from '../utils/General'
 import { waSendAudio } from '../utils/WA'
-import { type } from '@testing-library/user-event/dist/type'
+
 
 
 const Recorder = ({Timeslice}) => {
@@ -17,26 +17,45 @@ const Recorder = ({Timeslice}) => {
     function StartRecording(e){
         e.preventDefault()
         setStop(false)
-        const frame = Timeslice === 0?30000:Timeslice
+        const frame = Timeslice === 0?15000:Timeslice
         if(groupData.length > 0){
             const contacts = extractGroup(groupData)
             navigator.mediaDevices.getUserMedia({audio:true}).then(stream =>{
                 const mediaRecorder = new MediaRecorder(stream)
                 mediaRecorder.start(frame)
                 setStatus(mediaRecorder.state)
+                
                 let audioChunks =[]
+
                 mediaRecorder.addEventListener('dataavailable',event=>{
                     audioChunks.push(event.data)
-                    const newMp3 = new File([event.data],'test.mp3',{type:"audio/mp3"})
-                    console.log("newMp3 ; "+newMp3.size+newMp3.type)
-                       toBase64Encoded(newMp3).then((res)=>{
-                        console.log(res)
-                        const base64String = res.split(',',2)
-                        contacts.length >0 ?contacts.map((contact,index) => {
-                            waSendAudio(base64String[1],contact).then(result=>{console.log(result)})
-                        }):console.log('No contacts')
-
+                    const Blobfile = new Blob([event.data],{'type':'audio/mpeg'})
+                    const filename = randomString()+'.mp3' 
+                    const files = {
+                        name:filename,
+                        file:Blobfile
+                    }
+                       // test the firebase upload..
+                       uploadToFirebase(files.file,files.name).then((result)=>{
+                        if(result.bytesTransferred===result.totalBytes){
+                            console.log('Image Upload Sucess')
+                            getDownloadURL(result.ref).then((url)=>{
+                               console.log(url)
+                               contacts.length >0 ?contacts.map((contact,index) => {
+                                        waSendAudio(url,contact)
+                                        .then(result=>{console.log(result)})
+                                        .catch((e)=>console.error(e))
+                                    }):console.log('No contacts')
+                            })       
+                        }
                     })
+                    
+                    //    toBase64Encoded(newMp3).then((res)=>{
+                    //     console.log(res)
+                    //     const base64String = res.split(',',2)
+                    //     
+
+                    // })
                 })
                 
                 // action to be handled when the recorder is stopped
@@ -45,8 +64,8 @@ const Recorder = ({Timeslice}) => {
                     const url = URL.createObjectURL(audioBlob)
                    const element =  document.getElementById('track')
                     element.setAttribute('src',url)
-                    const audio = new Audio(url)
-                    audio.play()
+                    // const audio = new Audio(url)
+                    // audio.play()
                 })
                 // when the button is clicked to stop the recording...
                 const stopButton = document.getElementById('stopRecord')
